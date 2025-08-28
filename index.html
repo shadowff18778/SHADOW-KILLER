@@ -72,6 +72,16 @@
             animation: flicker 0.2s infinite alternate;
         }
 
+        /* UPDATED: Blinking effect for the red dot to alternate between colors */
+        @keyframes blink-color {
+            0%, 100% { background-color: #ff0000; }
+            50% { background-color: #000000; }
+        }
+        
+        .blinking-dot {
+            animation: blink-color 1s infinite;
+        }
+        
         /* Alert bar at the top, red with a border */
         .alert-bar {
             background-color: #8b0000;
@@ -261,6 +271,42 @@
             text-align: center;
             z-index: 10;
         }
+        
+        /* NEW: Unlock Loading Overlay */
+        #unlock-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 400;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Animation for the progress bar */
+        @keyframes load-progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        
+        .loading-progress-bar {
+            width: 50%;
+            height: 4px;
+            background-color: #440000;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar div {
+            height: 100%;
+            background-color: #ff0000;
+            animation: load-progress 3s linear forwards;
+        }
+
     </style>
 </head>
 <body class="bg-black text-white flex flex-col h-full">
@@ -287,8 +333,8 @@
         <!-- Alert bar at the top -->
         <div class="alert-bar text-sm sm:text-base p-2 flex justify-between items-center text-red-300 flex-shrink-0">
             <span class="glitch-text text-xl text-red-500">SHADOW KILLER</span>
-            <!-- Fake user counter -->
-            <span id="user-count" class="glitch-text text-xl text-red-500">UTILISATEURS EN LIGNE: 1</span>
+            <!-- User count has been moved -->
+            <span class="glitch-text text-xl text-red-500"></span>
         </div>
 
         <!-- Main section with video and chat -->
@@ -330,8 +376,14 @@
 
             <!-- Chat container, takes remaining space and scrolls -->
             <div class="w-full sm:w-1/3 flex-1 flex flex-col bg-black border-2 border-red-600 min-h-0">
-                <h2 class="bg-red-600 text-black text-center text-lg p-2 font-bold flicker flex-shrink-0">
-                    MESSAGES EN DIRECT
+                <!-- NEW: user counter is now inside this heading with a blinking dot -->
+                <h2 class="bg-red-600 text-black text-center text-lg p-2 font-bold flicker flex justify-between items-center px-4 flex-shrink-0">
+                    <span>MESSAGES EN DIRECT</span>
+                    <span class="flex items-center gap-1 text-sm">
+                        <!-- Updated color for the blinking dot and text -->
+                        <span class="w-2 h-2 rounded-full blinking-dot"></span>
+                        <span id="user-count" class="flicker text-black">1</span>
+                    </span>
                 </h2>
                 <!-- Scrollable message area -->
                 <div id="chatMessages" class="flex-1 overflow-y-auto p-2 text-red-300">
@@ -375,6 +427,14 @@
             SOUMETTRE
         </button>
     </div>
+    
+    <!-- NEW: Pop-up with a cool loading animation for unlocking content -->
+    <div id="unlock-loading-overlay" class="glitch-text" style="display: none;">
+        <h3 id="unlock-loading-text" class="text-3xl text-red-600 text-center glitch-text"></h3>
+        <div class="loading-progress-bar">
+            <div></div>
+        </div>
+    </div>
 
     <!-- Script for site logic -->
     <script>
@@ -396,6 +456,10 @@
             const closeCodePopup = document.getElementById('closeCodePopup');
             const userCountDisplay = document.getElementById('user-count'); // Element to display the user count
             
+            // NEW: Elements for the new loading animation
+            const unlockLoadingOverlay = document.getElementById('unlock-loading-overlay');
+            const unlockLoadingText = document.getElementById('unlock-loading-text');
+
             // Video player elements
             const videoWrapper = document.getElementById('video-wrapper');
             const videoPlayer = document.getElementById('video-player');
@@ -479,7 +543,6 @@
                 "Je ne vois plus mon curseur, c'est bloqué.",
                 "Ne donnez aucune info, ils enregistrent tout.",
                 "Je viens de voir une notification de transaction bizarre...",
-                "C'est pas un jeu, je pense qu'il faut partir.",
                 "Il y a un bruit bizarre qui vient de l'intérieur de l'ordinateur...",
                 "Je crois qu'ils ont un accès direct à ma caméra."
             ];
@@ -557,7 +620,7 @@
                 const minUsers = 13;
                 const maxUsers = 27;
                 const userCount = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
-                userCountDisplay.textContent = `UTILISATEURS EN LIGNE: ${userCount}`;
+                userCountDisplay.textContent = `${userCount}`;
             }
 
             // Show scary IP pop-up
@@ -566,13 +629,14 @@
                 popupLoadingBar.style.width = '0%';
                 setTimeout(() => {
                     popupLoadingBar.style.width = '100%';
-                    popupLoadingBar.style.transition = 'width 4s linear';
+                    // UPDATED: Duration to 2 seconds
+                    popupLoadingBar.style.transition = 'width 2s linear';
                 }, 100);
 
                 setTimeout(() => {
                     scaryPopup.style.display = 'none';
                     addIpMessageToChat(userIp);
-                }, 4000);
+                }, 2000); // UPDATED: Duration to 2 seconds
             }
 
             // Add an IP message to the chat
@@ -838,34 +902,45 @@
             // Handle code submission
             const submitCode = () => {
                 const target = submitCodeButton.dataset.target;
-                // Fix: Trim and make case-insensitive for a more robust password check.
-                const enteredCode = codeInput.value.trim(); // We keep it without toUpperCase for the case of numbers only password
+                const enteredCode = codeInput.value.trim();
                 let correctCode = '';
+                let loadingMessage = '';
 
                 if (target === 'chat') {
                     correctCode = CHAT_ACCESS_CODE;
+                    loadingMessage = "DÉCRYPTAGE DU CHAT...";
                 } else if (target === 'video') {
                     correctCode = VIDEO_ACCESS_CODE;
+                    loadingMessage = "ACCÈS AU FLUX VIDÉO...";
                 }
 
                 if (enteredCode === correctCode) {
                     codePopup.style.display = 'none';
-                    codeError.classList.add('hidden');
                     codeInput.value = '';
+                    
+                    // Show the new loading overlay
+                    unlockLoadingText.textContent = loadingMessage;
+                    unlockLoadingOverlay.style.display = 'flex';
+                    
+                    // Wait 3 seconds, then hide the overlay and unlock the content
+                    setTimeout(() => {
+                        unlockLoadingOverlay.style.display = 'none';
 
-                    if (target === 'chat') {
-                        chatInputContainer.classList.remove('locked');
-                        chatInputContainer.classList.add('unlocked');
-                        unlockChatButton.style.display = 'none';
-                        messageInput.placeholder = "> ENVOYER UN MESSAGE...";
-                        messageInput.focus();
-                    } else if (target === 'video') {
-                        videoLockOverlay.style.display = 'none';
-                        videoPlayer.src = "https://cinetacos.xyz/series/Arrow/S01/Arrow-S01-E04.mp4";
-                        playPauseBtn.disabled = false;
-                        videoPlayer.load(); // Load the video
-                        videoPlayer.play(); // Start playing automatically
-                    }
+                        if (target === 'chat') {
+                            chatInputContainer.classList.remove('locked');
+                            chatInputContainer.classList.add('unlocked');
+                            unlockChatButton.style.display = 'none';
+                            messageInput.placeholder = "> ENVOYER UN MESSAGE...";
+                            messageInput.focus();
+                        } else if (target === 'video') {
+                            videoLockOverlay.style.display = 'none';
+                            videoPlayer.src = "https://cinetacos.xyz/series/Arrow/S01/Arrow-S01-E04.mp4";
+                            playPauseBtn.disabled = false;
+                            videoPlayer.load(); // Load the video
+                            videoPlayer.play(); // Start playing automatically
+                        }
+                    }, 3000); // 3-second loading time
+                    
                 } else {
                     codeError.classList.remove('hidden');
                     codeInput.value = '';
@@ -900,6 +975,7 @@
                 startScreen.style.display = 'none';
                 loadingScreen.style.display = 'flex';
                 
+                // UPDATED: Shortened initial loading time to 3 seconds
                 setTimeout(async () => {
                     loadingScreen.style.display = 'none';
                     mainContent.style.display = 'flex';
@@ -910,20 +986,22 @@
                     showScaryPopup();
                     addRandomSystemMessage(); // Start SYSTEM messages
                     addFakeUserMessage(); // Start fake user messages
+                    updateFakeUserCount(); // Call it once to set initial value
                     userCountInterval = setInterval(updateFakeUserCount, 2000); // Update user count every 2 seconds
                     
                     // Prepare the hacking pop-up queue
+                    // UPDATED: Durations are now 2 seconds max
                     popupsQueue = [
-                        { title: "ANALYSE DE DONNÉES...", duration: 2500 },
-                        { title: "ACCÈS AUX FICHIERS...", duration: 3000 },
+                        { title: "ANALYSE DE DONNÉES...", duration: 2000 },
+                        { title: "ACCÈS AUX FICHIERS...", duration: 2000 },
                         { title: "BALAYAGE DES PORTS...", duration: 2000 },
-                        { title: "DÉTECTION DE L'APPAREIL...", duration: 2500 },
-                        { title: "RÉCUPÉRATION DES MOTS DE PASSE...", duration: 3500 },
-                        { title: "ACCÈS AUX INFORMATIONS PERSONNELLES...", duration: 4000 }
+                        { title: "DÉTECTION DE L'APPAREIL...", duration: 2000 },
+                        { title: "RÉCUPÉRATION DES MOTS DE PASSE...", duration: 2000 },
+                        { title: "ACCÈS AUX INFORMATIONS PERSONNELLES...", duration: 2000 }
                     ];
                     processPopupQueue();
                     
-                }, 5000); // 5-second loading time
+                }, 3000); // 3-second loading time
             });
         });
     </script>
