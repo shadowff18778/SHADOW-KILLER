@@ -747,16 +747,33 @@
             
             fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-            // Handle styling in fullscreen mode
+            // UPDATED LOGIC FOR FULLSCREEN:
+            // This function handles the transition between custom and native controls
+            // when entering or exiting fullscreen mode.
             document.addEventListener('fullscreenchange', () => {
                 if (document.fullscreenElement) {
+                    // Entering fullscreen:
+                    // 1. Hide the custom controls.
+                    videoControls.style.display = 'none';
+                    // 2. Add the 'controls' attribute to the video element to enable native controls.
+                    videoPlayer.controls = true;
+                    // 3. Apply custom fullscreen styling to the wrapper.
                     videoWrapper.classList.add('custom-fullscreen');
+                    // 4. Hide the main content to make the video take up the entire screen.
                     document.getElementById('main-content').classList.add('hidden');
                 } else {
+                    // Exiting fullscreen:
+                    // 1. Show the custom controls again.
+                    videoControls.style.display = 'flex';
+                    // 2. Remove the 'controls' attribute to hide native controls.
+                    videoPlayer.controls = false;
+                    // 3. Remove custom fullscreen styling from the wrapper.
                     videoWrapper.classList.remove('custom-fullscreen');
+                    // 4. Show the main content again.
                     document.getElementById('main-content').classList.remove('hidden');
                 }
             });
+
 
             // Keyboard event listener to block dev tools and control video
             document.addEventListener('keydown', (e) => {
