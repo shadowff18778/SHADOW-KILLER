@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHADOW KILLER</title>
-    <!-- Use Tailwind CSS for modern and responsive styling -->
+    <!-- Utilisation de Tailwind CSS pour un style moderne et réactif -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for the console theme and glitch effect */
+        /* Styles personnalisés pour le thème de la console et l'effet de glitch */
         html, body {
             height: 100%;
             font-family: 'VT323', monospace;
             background-color: #000000;
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='fill:white;font-size:24px;'><text y='50%'>💀</text></svg>") 16 16, auto;
-            overflow: hidden; /* Prevents global page scrolling */
+            overflow: hidden; /* Empêche le défilement global de la page */
         }
 
-        /* Scanline effect to simulate a CRT screen (optional) */
+        /* Effet de balayage pour simuler un écran CRT */
         body::before {
             content: '';
             position: fixed;
@@ -38,7 +38,7 @@
             z-index: 100;
         }
 
-        /* Glitch animation for text */
+        /* Animation de glitch pour le texte */
         @keyframes text-glitch {
             0% { transform: translate(0); opacity: 1; }
             20% { transform: translate(-2px, -2px); opacity: 0.8; }
@@ -52,7 +52,7 @@
             animation: text-glitch 0.5s infinite alternate;
         }
         
-        /* Shake animation for the entire pop-up */
+        /* Animation de secousse pour la pop-up */
         @keyframes popup-shake {
             0% { transform: translate(-50%, -50%); }
             20% { transform: translate(-52%, -48%); }
@@ -62,7 +62,7 @@
             100% { transform: translate(-50%, -50%); }
         }
 
-        /* Flicker animation for an interference effect */
+        /* Animation de scintillement pour un effet d'interférence */
         @keyframes flicker {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -72,7 +72,7 @@
             animation: flicker 0.2s infinite alternate;
         }
 
-        /* Blinking effect for the red dot to alternate between colors */
+        /* Effet de clignotement pour le point rouge */
         @keyframes blink-color {
             0%, 100% { background-color: #ff0000; }
             50% { background-color: #000000; }
@@ -82,13 +82,13 @@
             animation: blink-color 1s infinite;
         }
         
-        /* Alert bar at the top, red with a border */
+        /* Barre d'alerte en haut, rouge avec une bordure */
         .alert-bar {
             background-color: #8b0000;
             border-bottom: 2px solid #ff0000;
         }
 
-        /* Hacking pop-up in the center */
+        /* Pop-up de piratage au centre */
         .hacking-popup {
             position: fixed;
             top: 50%;
@@ -119,7 +119,7 @@
             transition: width linear;
         }
 
-        /* Pop-up for the access code */
+        /* Pop-up pour le code d'accès */
         .code-popup {
             position: fixed;
             top: 50%;
@@ -161,7 +161,7 @@
             cursor: pointer;
         }
 
-        /* Hide screens at the start */
+        /* Masquer les écrans au démarrage */
         #start-screen, #loading-screen, #main-content {
             display: none;
             position: absolute;
@@ -171,12 +171,12 @@
             justify-content: center;
         }
         
-        /* Show start screen on load */
+        /* Afficher l'écran de démarrage au chargement */
         #start-screen.active {
             display: flex;
         }
 
-        /* Custom video player style */
+        /* Style du lecteur vidéo personnalisé */
         .custom-video-container {
             position: relative;
             width: 100%;
@@ -191,7 +191,7 @@
             display: block;
         }
         
-        /* Custom video controls overlay */
+        /* Superposition des contrôles vidéo personnalisés */
         .video-controls {
             position: absolute;
             bottom: 0;
@@ -205,7 +205,7 @@
             transition: opacity 0.3s ease-in-out;
         }
 
-        /* Class to hide controls with opacity 0 */
+        /* Classe pour masquer les contrôles avec opacité 0 */
         .video-controls.controls-hidden {
             opacity: 0;
             pointer-events: none;
@@ -245,7 +245,7 @@
             text-align: right;
         }
 
-        /* Style for custom fullscreen mode */
+        /* Style pour le mode plein écran personnalisé */
         .custom-fullscreen {
             position: fixed;
             top: 0;
@@ -257,7 +257,7 @@
             border: 2px solid #ff0000;
         }
         
-        /* Video lock overlay */
+        /* Superposition de verrouillage vidéo */
         .video-lock-overlay {
             position: absolute;
             inset: 0;
@@ -272,7 +272,7 @@
             z-index: 10;
         }
         
-        /* Unlock Loading Overlay */
+        /* Superposition de chargement de déverrouillage */
         #unlock-loading-overlay {
             position: fixed;
             top: 0;
@@ -287,7 +287,7 @@
             justify-content: center;
         }
         
-        /* Animation for the progress bar */
+        /* Animation pour la barre de progression */
         @keyframes load-progress {
             0% { width: 0; }
             100% { width: 100%; }
@@ -307,16 +307,16 @@
             animation: load-progress 3s linear forwards;
         }
         
-        /* Updated animation for the "Powered by SHADOW" text */
+        /* Animation mise à jour pour le texte "Powered by SHADOW" */
         @keyframes shadow-text-flicker {
             0%, 100% { 
                 opacity: 1;
-                /* Subtler text shadow for a less intense neon effect */
+                /* Ombre de texte plus subtile */
                 text-shadow: 0 0 2px #ff0000, 0 0 5px #ff0000; 
             }
             50% { 
                 opacity: 0.8;
-                text-shadow: none; /* No shadow at midpoint for the flicker effect */
+                text-shadow: none; /* Pas d'ombre au milieu pour l'effet de scintillement */
             }
         }
         
@@ -326,19 +326,12 @@
             animation: shadow-text-flicker 1.5s infinite alternate;
         }
 
-        /* NEW: Stylized message for video not found */
-        /*
-        * THIS IS THE IMPROVED PART.
-        * The overlay uses `position: absolute` and `inset: 0` to fill the parent container completely.
-        * The parent container (`#video-wrapper`) has `position: relative`.
-        * The flexbox classes (`flex`, `flex-col`, `items-center`, `justify-center`) ensure the content is perfectly centered.
-        * This combination makes the overlay fully responsive and contained within the video player's area.
-        */
+        /* Stylisation du message pour la vidéo non trouvée */
         .video-error-overlay {
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.9);
-            display: none; /* Hidden by default */
+            display: none; /* Masqué par défaut */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -348,7 +341,7 @@
             z-index: 10;
         }
         
-        /* Animation for the error icon */
+        /* Animation pour l'icône d'erreur */
         @keyframes pulse-error {
             0%, 100% {
                 transform: scale(1);
@@ -367,7 +360,7 @@
 </head>
 <body class="bg-black text-white flex flex-col h-full">
 
-    <!-- Start screen -->
+    <!-- Écran de démarrage -->
     <div id="start-screen" class="w-full h-full bg-black z-10 active">
         <h1 class="text-3xl text-red-600 mb-8 glitch-text">
             [DÉMARRAGE DU TERMINAL]
@@ -377,40 +370,40 @@
         </button>
     </div>
 
-    <!-- Loading screen (hidden at start) -->
+    <!-- Écran de chargement (masqué au démarrage) -->
     <div id="loading-screen" class="w-full h-full bg-black z-20">
         <p class="text-xl text-red-600 flicker">
             BOOTING...
         </p>
-        <!-- NEW: "Powered by SHADOW" text with animation -->
+        <!-- Texte "Powered by SHADOW" avec animation -->
         <p class="shadow-text absolute bottom-4">
             Powered by SHADOW
         </p>
     </div>
 
-    <!-- Main content (hidden at start) -->
+    <!-- Contenu principal (masqué au démarrage) -->
     <div id="main-content" class="w-full flex-1 flex flex-col p-4 hidden">
-        <!-- Alert bar at the top -->
+        <!-- Barre d'alerte en haut -->
         <div class="alert-bar text-sm sm:text-base p-2 flex justify-between items-center text-red-300 flex-shrink-0">
             <span class="glitch-text text-xl text-red-500">SHADOW KILLER</span>
-            <!-- User count has been moved -->
+            <!-- Le compteur d'utilisateurs a été déplacé -->
             <span class="glitch-text text-xl text-red-500"></span>
         </div>
 
-        <!-- Main section with video and chat -->
+        <!-- Section principale avec vidéo et chat -->
         <div class="flex-1 flex flex-col sm:flex-row gap-4 mt-4 overflow-hidden min-h-0">
-            <!-- Video container, takes up space -->
-            <div id="video-wrapper" class="w-full sm:w-2/3 flex-shrink-0 flex items-center justify-center bg-black relative aspect-video border-2 border-red-600">
-                <!-- Custom video player -->
+            <!-- Conteneur vidéo, prend de la place -->
+            <div id="video-wrapper" class="w-full sm:w-2/3 flex-shrink-0 flex items-center justify-content-center bg-black relative aspect-video border-2 border-red-600">
+                <!-- Lecteur vidéo personnalisé -->
                 <div class="custom-video-container w-full h-full">
                     <video id="video-player"></video>
                     
-                    <!-- Interface for loading and error -->
+                    <!-- Interface de chargement et d'erreur -->
                     <div id="video-status" class="absolute inset-0 bg-black flex items-center justify-content-center text-red-600 text-lg">
                         <p id="video-status-text" class="glitch-text">TENTATIVE DE CONNEXION AU FLUX VIDÉO...</p>
                     </div>
                     
-                    <!-- Video lock overlay -->
+                    <!-- Superposition de verrouillage vidéo -->
                     <div id="video-lock-overlay" class="video-lock-overlay">
                         <p class="glitch-text mb-4">[ACCÈS VIDÉO VERROUILLÉ]</p>
                         <button id="unlockVideoButton" class="bg-red-600 text-black font-bold p-2 mt-4 glitch-text">
@@ -418,14 +411,14 @@
                         </button>
                     </div>
 
-                    <!-- NEW: Video error overlay -->
+                    <!-- Superposition d'erreur vidéo -->
                     <div id="video-error-overlay" class="video-error-overlay">
                         <span class="error-icon mb-4">☠</span>
                         <p class="glitch-text text-2xl">[VIDÉO INACCESSIBLE]</p>
                         <p class="text-sm mt-2 text-gray-400">Le flux vidéo n'est pas disponible pour le moment.</p>
                     </div>
 
-                    <!-- Video player controls -->
+                    <!-- Contrôles du lecteur vidéo -->
                     <div id="video-controls" class="video-controls controls-hidden glitch-text">
                         <button id="play-pause-btn" class="play-pause-btn glitch-text" disabled>▶</button>
                         <div id="progress-bar-container" class="progress-bar-container">
@@ -441,24 +434,24 @@
                 </div>
             </div>
 
-            <!-- Chat container, takes remaining space and scrolls -->
+            <!-- Conteneur du chat, prend l'espace restant et se défile -->
             <div class="w-full sm:w-1/3 flex-1 flex flex-col bg-black border-2 border-red-600 min-h-0">
-                <!-- NEW: user counter is now inside this heading with a blinking dot -->
+                <!-- Compteur d'utilisateurs maintenant dans cet en-tête avec un point clignotant -->
                 <h2 class="bg-red-600 text-black text-center text-lg p-2 font-bold flicker flex justify-between items-center px-4 flex-shrink-0">
                     <span>MESSAGES EN DIRECT</span>
                     <span class="flex items-center gap-1 text-sm">
-                        <!-- Updated color for the blinking dot and text -->
+                        <!-- Couleur mise à jour pour le point clignotant et le texte -->
                         <span class="w-2 h-2 rounded-full blinking-dot"></span>
                         <span id="user-count" class="flicker text-black">1</span>
                     </span>
                 </h2>
-                <!-- Scrollable message area -->
+                <!-- Zone de messages défilable -->
                 <div id="chatMessages" class="flex-1 overflow-y-auto p-2 text-red-300">
-                    <!-- Initial chat messages to build atmosphere -->
+                    <!-- Messages de chat initiaux pour créer l'ambiance -->
                     <p class="flicker"><span class="text-red-500">SYSTEM:</span> Connexion au terminal établie...</p>
                     <p class="flicker"><span class="text-red-500">SYSTEM:</span> Attention, surveillance détectée. Votre anonymat est en danger.</p>
                 </div>
-                <!-- Chat input and button (fixed) -->
+                <!-- Entrée de chat et bouton (fixe) -->
                 <div class="flex-shrink-0 mt-auto">
                     <div id="chat-input-container" class="mt-2 p-2 locked">
                         <input type="text" id="messageInput" placeholder="> COMMENCER PAR DÉVERROUILLER LE CHAT..." class="w-full bg-transparent text-red-600 border-b border-red-600 placeholder-red-800 focus:outline-none">
@@ -471,7 +464,7 @@
         </div>
     </div>
     
-    <!-- Scary IP pop-up -->
+    <!-- Pop-up effrayante d'IP -->
     <div id="scary-popup" class="hacking-popup">
         <h3 id="popup-text" class="text-lg text-red-500 text-center glitch-text">
             RÉCUPÉRATION DES DONNÉES...
@@ -481,7 +474,7 @@
         </div>
     </div>
 
-    <!-- Pop-up for the access code -->
+    <!-- Pop-up pour le code d'accès -->
     <div id="code-popup" class="code-popup">
         <span class="close-button" id="closeCodePopup">&times;</span>
         <h3 class="text-lg text-red-500 glitch-text mb-4">
@@ -495,7 +488,7 @@
         </button>
     </div>
     
-    <!-- Unlock Loading Overlay -->
+    <!-- Superposition de chargement de déverrouillage -->
     <div id="unlock-loading-overlay" class="glitch-text" style="display: none;">
         <h3 id="unlock-loading-text" class="text-3xl text-red-600 text-center glitch-text"></h3>
         <div class="loading-progress-bar">
@@ -503,7 +496,7 @@
         </div>
     </div>
 
-    <!-- Script for site logic -->
+    <!-- Script pour la logique du site -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const startScreen = document.getElementById('start-screen');
@@ -521,13 +514,13 @@
             const submitCodeButton = document.getElementById('submitCodeButton');
             const codeError = document.getElementById('codeError');
             const closeCodePopup = document.getElementById('closeCodePopup');
-            const userCountDisplay = document.getElementById('user-count'); // Element to display the user count
+            const userCountDisplay = document.getElementById('user-count');
             
-            // NEW: Elements for the new loading animation
+            // Éléments pour la nouvelle animation de chargement
             const unlockLoadingOverlay = document.getElementById('unlock-loading-overlay');
             const unlockLoadingText = document = document.getElementById('unlock-loading-text');
 
-            // Video player elements
+            // Éléments du lecteur vidéo
             const videoWrapper = document.getElementById('video-wrapper');
             const videoPlayer = document.getElementById('video-player');
             const playPauseBtn = document.getElementById('play-pause-btn');
@@ -541,18 +534,18 @@
             const videoLockOverlay = document.getElementById('video-lock-overlay');
             const unlockVideoButton = document.getElementById('unlockVideoButton');
 
-            // NEW: Video error overlay
+            // Superposition d'erreur vidéo
             const videoErrorOverlay = document.getElementById('video-error-overlay');
 
             const CHAT_ACCESS_CODE = "95741";
             const VIDEO_ACCESS_CODE = "95741"; 
-            let userIp = null;
+            let userLocationData = null;
             let popupsQueue = [];
             let isProcessingPopup = false;
             let controlsHideTimeout = null;
             let userCountInterval = null;
 
-            // Updated list of SYSTEM messages to be more unsettling.
+            // Liste de messages SYSTEM mise à jour pour être plus inquiétante.
             const chatMessagesList = [
                 "SYSTEM: Anomalie détectée dans le flux de données.",
                 "SYSTEM: Erreur de checksum. Données corrompues.",
@@ -585,8 +578,23 @@
                 "ANONYME-51A", "USER-23B", "GHOST-7C", "SHADOW-10D", "CYPHER-9E", "GLITCH-11F", 
                 "REVENANT-14G", "ECHO-2H", "VOID-15I", "SPECTRE-8J", "MALWARE-6K", "VIRUS-12L"
             ];
+            
+            // Nouvelle liste de villes françaises et d'IP pour les faux utilisateurs
+            const frenchLocations = [
+                { city: 'Paris', ip: '82.66.155.7' },
+                { city: 'Lyon', ip: '194.206.12.3' },
+                { city: 'Marseille', ip: '90.46.220.18' },
+                { city: 'Toulouse', ip: '176.158.42.99' },
+                { city: 'Nice', ip: '88.169.100.12' },
+                { city: 'Nantes', ip: '212.198.88.221' },
+                { city: 'Strasbourg', ip: '78.192.110.5' },
+                { city: 'Bordeaux', ip: '86.208.55.101' },
+                { city: 'Lille', ip: '93.22.13.44' },
+                { city: 'Rennes', ip: '109.190.21.87' },
+                { city: 'Grenoble', ip: '92.145.77.10' }
+            ];
 
-            // Updated list of fake user messages to be more specific and urgent
+            // Liste mise à jour de faux messages d'utilisateurs
             const fakeUserMessages = [
                 "C'est quoi ce truc?",
                 "Ma souris bouge toute seule...",
@@ -604,7 +612,6 @@
                 "Je vois un visage...",
                 "Fermez la fenêtre !",
                 "Je n'aurais jamais dû me connecter.",
-                // New messages added here as requested
                 "Il faut quitter ce site, ils volent nos informations !",
                 "Mon antivirus a sonné, c'est pas bon signe.",
                 "Utilisez un VPN les gars ! On est en danger !",
@@ -619,24 +626,63 @@
             let lastMessageIndex = -1;
             let lastFakeUserIndex = -1;
 
-            // Generate a fake IP in case of fetch failure
-            function generateFakeIp() {
-                return `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-            }
+            /**
+             * Fonction principale pour récupérer les données de géolocalisation.
+             * Tente plusieurs APIs pour une meilleure fiabilité.
+             * @returns {Promise<Object>} Un objet contenant l'IP, la ville et le pays.
+             */
+            async function getGeolocationData() {
+                const apis = [
+                    'https://ipapi.co/json/',
+                    'https://ipinfo.io/json',
+                    'https://freegeoip.app/json/'
+                ];
 
-            // Fetch user's public IP
-            async function getPublicIp() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    console.error("Error fetching IP, using a fake one.", error);
-                    return generateFakeIp();
+                for (const api of apis) {
+                    try {
+                        const response = await fetch(api);
+                        if (!response.ok) {
+                            throw new Error(`Erreur réseau de l'API ${api}`);
+                        }
+                        const data = await response.json();
+                        
+                        console.log(`Données de géolocalisation brutes de ${api}:`, data);
+
+                        // Normaliser la réponse de l'API
+                        let ip, city, country;
+                        if (data.ip) {
+                            ip = data.ip;
+                            city = data.city || 'Ville Inconnue';
+                            country = data.country_name || 'Pays Inconnu';
+                        } else if (data.IP) {
+                            ip = data.IP;
+                            city = data.City || 'Ville Inconnue';
+                            country = data.CountryName || 'Pays Inconnu';
+                        } else {
+                            ip = 'Adresse IP Inconnue';
+                            city = 'Ville Inconnue';
+                            country = 'Pays Inconnu';
+                        }
+
+                        // S'assurer que les données ne sont pas vides
+                        if (city !== 'Ville Inconnue' && country !== 'Pays Inconnu') {
+                            return { ip, city, country };
+                        }
+                    } catch (error) {
+                        console.error(`Échec de la récupération des données de localisation depuis ${api}. Tentative suivante...`, error);
+                    }
                 }
+                
+                // Repli si toutes les API échouent
+                console.error("Toutes les APIs de géolocalisation ont échoué. Utilisation de données de secours.");
+                return {
+                    ip: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                    city: 'Gotham',
+                    country: 'États-Unis'
+                };
             }
 
-            // Add a random SYSTEM message
+            // Ajoute un message SYSTEM aléatoire
             function addRandomSystemMessage() {
                 let messageIndex = lastMessageIndex;
                 while (messageIndex === lastMessageIndex) {
@@ -659,32 +705,34 @@
                 setTimeout(addRandomSystemMessage, randomDelay);
             }
             
-            // Add a random fake user message to the chat
+            // Ajoute un faux message d'utilisateur au chat, avec IP et ville
             function addFakeUserMessage() {
                 let userIndex = lastFakeUserIndex;
                 let messageIndex = Math.floor(Math.random() * fakeUserMessages.length);
                 
-                // Ensure a different user and message are selected
                 while (userIndex === lastFakeUserIndex) {
                     userIndex = Math.floor(Math.random() * fakeUsernames.length);
                 }
                 lastFakeUserIndex = userIndex;
 
+                // Sélection aléatoire d'une IP et d'une ville française
+                const locationIndex = Math.floor(Math.random() * frenchLocations.length);
+                const location = frenchLocations[locationIndex];
                 const username = fakeUsernames[userIndex];
                 const message = fakeUserMessages[messageIndex];
                 
                 const newMessage = document.createElement('p');
                 newMessage.classList.add('flicker');
-                newMessage.innerHTML = `<span class="text-white">${username}:</span> <span class="text-red-300">${message}</span>`;
+                newMessage.innerHTML = `<span class="text-white">[${username}]</span> <span class="text-green-500">[${location.ip} (${location.city}, France)]</span> <span class="text-red-300">> ${message}</span>`;
                 
                 chatMessages.appendChild(newMessage);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                const randomDelay = Math.random() * 3000 + 1500; // Fake users respond a bit slower
+                const randomDelay = Math.random() * 3000 + 1500;
                 setTimeout(addFakeUserMessage, randomDelay);
             }
 
-            // Function to update the fake user count
+            // Fonction pour mettre à jour le faux nombre d'utilisateurs
             function updateFakeUserCount() {
                 const minUsers = 13;
                 const maxUsers = 27;
@@ -692,32 +740,40 @@
                 userCountDisplay.textContent = `${userCount}`;
             }
 
-            // Show scary IP pop-up
+            // Afficher la pop-up effrayante d'IP
             function showScaryPopup() {
                 scaryPopup.style.display = 'block';
                 popupLoadingBar.style.width = '0%';
                 setTimeout(() => {
                     popupLoadingBar.style.width = '100%';
-                    // UPDATED: Duration to 2 seconds
                     popupLoadingBar.style.transition = 'width 2s linear';
                 }, 100);
 
                 setTimeout(() => {
                     scaryPopup.style.display = 'none';
-                    addIpMessageToChat(userIp);
-                }, 2000); // UPDATED: Duration to 2 seconds
+                    addGeolocationMessageToChat(userLocationData);
+                }, 2000);
             }
-
-            // Add an IP message to the chat
-            function addIpMessageToChat(ip) {
+            
+            /**
+             * Ajoute un message de géolocalisation formaté au chat.
+             * @param {Object} location - L'objet de données de localisation avec ip, ville et pays.
+             */
+            function addGeolocationMessageToChat(location) {
                 const newMessage = document.createElement('p');
                 newMessage.classList.add('flicker');
-                newMessage.innerHTML = `<span class="text-red-500">SYSTEM:</span> <span class="text-red-300">Adresse IP détectée: <span class="text-white">${ip}</span></span>`;
+                newMessage.innerHTML = `<span class="text-red-500">SYSTEM:</span> <span class="text-red-300">Adresse IP détectée: <span class="text-white">${location.ip}</span></span>`;
                 chatMessages.appendChild(newMessage);
+
+                const locationMessage = document.createElement('p');
+                locationMessage.classList.add('flicker');
+                locationMessage.innerHTML = `<span class="text-red-500">SYSTEM:</span> <span class="text-red-300">Localisation: <span class="text-white">${location.city}, ${location.country}</span></span>`;
+                chatMessages.appendChild(locationMessage);
+                
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // Functions to manage hacking pop-ups
+            // Fonctions pour gérer les pop-ups de piratage
             function createHackingPopup(title, duration) {
                 const popup = document.createElement('div');
                 popup.classList.add('hacking-popup', 'glitch-text');
@@ -761,17 +817,16 @@
                 const nextPopup = popupsQueue.shift();
                 await createHackingPopup(nextPopup.title, nextPopup.duration);
                 isProcessingPopup = false;
-                processPopupQueue(); // Process the next pop-up
+                processPopupQueue();
             }
 
-            // Video player functions
+            // Fonctions du lecteur vidéo
             function formatTime(time) {
                 const minutes = Math.floor(time / 60);
                 const seconds = Math.floor(time % 60);
                 return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }
 
-            // Function to toggle play/pause
             function togglePlayPause() {
                 if (videoPlayer.paused || videoPlayer.ended) {
                     videoPlayer.play();
@@ -780,12 +835,11 @@
                 }
             }
 
-            // Function to seek 10 seconds forward or backward
             function seek(seconds) {
                 videoPlayer.currentTime += seconds;
             }
             
-            // --- NEW LOGIC FOR VIDEO PLAYER CONTROLS V4 ---
+            // Logique pour les contrôles du lecteur vidéo
             function showControls() {
                 videoControls.classList.remove('controls-hidden');
             }
@@ -796,27 +850,23 @@
             
             function resetHideTimer() {
                 clearTimeout(controlsHideTimeout);
-                // Controls stay visible when video is paused
                 if (!videoPlayer.paused) {
                     controlsHideTimeout = setTimeout(() => {
                         hideControls();
-                    }, 3000); // Hide after 3 seconds of inactivity
+                    }, 3000);
                 }
             }
             
-            // Use a single mousemove listener on the wrapper
             videoWrapper.addEventListener('mousemove', () => {
                 showControls();
                 resetHideTimer();
             });
 
-            // Use mouseleave only to clear the timer if the mouse leaves the entire video area
             videoWrapper.addEventListener('mouseleave', () => {
                 clearTimeout(controlsHideTimeout);
                 hideControls();
             });
             
-            // Mobile events
             videoWrapper.addEventListener('touchstart', () => {
                 showControls();
                 resetHideTimer();
@@ -826,21 +876,17 @@
                 resetHideTimer();
             }, { passive: true });
 
-
-            // When video is playing, enable the hide timer
             videoPlayer.addEventListener('play', () => {
                 playPauseBtn.textContent = '⏸';
                 resetHideTimer();
             });
 
-            // When video is paused, disable the hide timer and show controls
             videoPlayer.addEventListener('pause', () => {
                 playPauseBtn.textContent = '▶';
                 showControls();
                 clearTimeout(controlsHideTimeout);
             });
 
-            // Handle button clicks
             playPauseBtn.addEventListener('click', () => {
                 togglePlayPause();
             });
@@ -858,18 +904,15 @@
                 videoPlayer.currentTime = seekTime;
             });
             
-            // Hide status pop-up when video is ready to play
             videoPlayer.addEventListener('canplay', () => {
                 videoStatus.style.display = 'none';
             });
 
-            // Handle video loading errors
             videoPlayer.addEventListener('error', () => {
                 videoStatus.style.display = 'flex';
                 videoStatusText.textContent = "ERREUR DE CONNEXION AU FLUX...";
             });
 
-            // Function for custom fullscreen mode
             function toggleFullscreen() {
                 if (!document.fullscreenElement) {
                     videoWrapper.requestFullscreen();
@@ -880,52 +923,37 @@
             
             fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-            // UPDATED LOGIC FOR FULLSCREEN:
-            // This function handles the transition between custom and native controls
-            // when entering or exiting fullscreen mode.
             document.addEventListener('fullscreenchange', () => {
                 if (document.fullscreenElement) {
-                    // Entering fullscreen:
-                    // 1. Hide the custom controls.
                     videoControls.style.display = 'none';
-                    // 2. Add the 'controls' attribute to the video element to enable native controls.
                     videoPlayer.controls = true;
-                    // 3. Apply custom fullscreen styling to the wrapper.
                     videoWrapper.classList.add('custom-fullscreen');
-                    // 4. Hide the main content to make the video take up the entire screen.
                     document.getElementById('main-content').classList.add('hidden');
                 } else {
-                    // Exiting fullscreen:
-                    // 1. Show the custom controls again.
                     videoControls.style.display = 'flex';
-                    // 2. Remove the 'controls' attribute to hide native controls.
                     videoPlayer.controls = false;
-                    // 3. Remove custom fullscreen styling from the wrapper.
                     videoWrapper.classList.remove('custom-fullscreen');
-                    // 4. Show the main content again.
                     document.getElementById('main-content').classList.remove('hidden');
                 }
             });
 
-
-            // Keyboard event listener to block dev tools and control video
+            // Écouteur d'événements clavier pour bloquer les outils de développement et contrôler la vidéo
             document.addEventListener('keydown', (e) => {
-                // Block dev tools shortcuts
+                // Bloquer les raccourcis des outils de développement
                 if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'J')) {
                     e.preventDefault();
                     console.log("Accès au devtools bloqué.");
                 }
 
-                // If user is in a text input, don't control the video
                 if (e.target === messageInput || e.target === codeInput) {
                     return;
                 }
 
-                // Video controls with keyboard
+                // Contrôles vidéo au clavier
                 switch(e.code) {
                     case 'Space':
                         e.preventDefault(); 
-                        if (videoPlayer.src) { // Check if video is unlocked
+                        if (videoPlayer.src) {
                             togglePlayPause();
                             showControls();
                         }
@@ -945,30 +973,28 @@
                 }
             });
 
-            // Handle unlocking the chat
+            // Gérer le déverrouillage du chat
             unlockChatButton.addEventListener('click', () => {
                 codePopup.style.display = 'block';
                 codeInput.focus();
-                // Set the context for the chat password check
                 submitCodeButton.dataset.target = 'chat';
             });
             
-            // Handle unlocking the video
+            // Gérer le déverrouillage de la vidéo
             unlockVideoButton.addEventListener('click', () => {
                 codePopup.style.display = 'block';
                 codeInput.focus();
-                // Set the context for the video password check
                 submitCodeButton.dataset.target = 'video';
             });
 
-            // Handle closing the code popup
+            // Gérer la fermeture de la pop-up du code
             closeCodePopup.addEventListener('click', () => {
                 codePopup.style.display = 'none';
                 codeError.classList.add('hidden');
                 codeInput.value = '';
             });
 
-            // Handle code submission
+            // Gérer la soumission du code
             const submitCode = () => {
                 const target = submitCodeButton.dataset.target;
                 const enteredCode = codeInput.value.trim();
@@ -987,11 +1013,9 @@
                     codePopup.style.display = 'none';
                     codeInput.value = '';
                     
-                    // Show the new loading overlay
                     unlockLoadingText.textContent = loadingMessage;
                     unlockLoadingOverlay.style.display = 'flex';
                     
-                    // Wait 3 seconds, then hide the overlay and unlock the content
                     setTimeout(() => {
                         unlockLoadingOverlay.style.display = 'none';
 
@@ -1002,15 +1026,11 @@
                             messageInput.placeholder = "> ENVOYER UN MESSAGE...";
                             messageInput.focus();
                         } else if (target === 'video') {
-                            // Check the video URL
-                            const videoUrl = ""; // This link will fail
-                            // For a working link, use:
-                            // const videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+                            const videoUrl = ""; // Ce lien échouera pour l'effet de jeu
                             
                             if (videoUrl && videoUrl.trim() !== '') {
                                 videoLockOverlay.style.display = 'none';
                                 videoPlayer.src = videoUrl;
-                                // Add a listener to handle video loading errors gracefully
                                 videoPlayer.addEventListener('error', () => {
                                     videoLockOverlay.style.display = 'flex';
                                     videoErrorOverlay.style.display = 'flex';
@@ -1018,7 +1038,6 @@
                                     videoPlayer.style.display = 'none';
                                     unlockVideoButton.style.display = 'none';
                                 });
-                                // On successful load, display the video and its controls
                                 videoPlayer.addEventListener('canplay', () => {
                                     videoPlayer.style.display = 'block';
                                     videoControls.style.display = 'flex';
@@ -1028,15 +1047,14 @@
                                 });
                                 videoPlayer.load();
                             } else {
-                                // If no video URL is provided, show the error message
-                                videoLockOverlay.style.display = 'none'; // Ensure lock overlay is hidden
+                                videoLockOverlay.style.display = 'none';
                                 videoErrorOverlay.style.display = 'flex';
                                 videoControls.style.display = 'none';
                                 videoPlayer.style.display = 'none';
                                 unlockVideoButton.style.display = 'none';
                             }
                         }
-                    }, 3000); // 3-second loading time
+                    }, 3000);
                     
                 } else {
                     codeError.classList.remove('hidden');
@@ -1052,7 +1070,7 @@
                 }
             });
 
-            // Handle sending messages with "Enter" key
+            // Gérer l'envoi de messages
             messageInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !chatInputContainer.classList.contains('locked')) {
                     const message = messageInput.value.trim();
@@ -1067,27 +1085,23 @@
                 }
             });
 
-            // Initialize the site
+            // Initialiser le site
             startButton.addEventListener('click', () => {
                 startScreen.style.display = 'none';
                 loadingScreen.style.display = 'flex';
                 
-                // UPDATED: Shortened initial loading time to 3 seconds
                 setTimeout(async () => {
                     loadingScreen.style.display = 'none';
                     mainContent.style.display = 'flex';
                     
-                    userIp = await getPublicIp();
+                    userLocationData = await getGeolocationData();
 
-                    // Launch processes
                     showScaryPopup();
-                    addRandomSystemMessage(); // Start SYSTEM messages
-                    addFakeUserMessage(); // Start fake user messages
-                    updateFakeUserCount(); // Call it once to set initial value
-                    userCountInterval = setInterval(updateFakeUserCount, 2000); // Update user count every 2 seconds
+                    addRandomSystemMessage();
+                    addFakeUserMessage();
+                    updateFakeUserCount();
+                    userCountInterval = setInterval(updateFakeUserCount, 2000);
                     
-                    // Prepare the hacking pop-up queue
-                    // UPDATED: Durations are now 2 seconds max
                     popupsQueue = [
                         { title: "ANALYSE DE DONNÉES...", duration: 2000 },
                         { title: "ACCÈS AUX FICHIERS...", duration: 2000 },
@@ -1098,7 +1112,7 @@
                     ];
                     processPopupQueue();
                     
-                }, 3000); // 3-second loading time
+                }, 3000);
             });
         });
     </script>
