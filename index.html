@@ -128,6 +128,30 @@
             color: #ff0000;
             text-shadow: 0 0 5px #ff0000;
         }
+        
+        /* Pop-up pour la première entrée */
+        .first-entry-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+            z-index: 350; /* Z-index plus élevé pour s'assurer qu'elle est au-dessus */
+            display: none;
+            text-align: center;
+        }
+
+        .first-entry-display {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
 
         .hacking-popup-bar {
             width: 100%;
@@ -513,7 +537,7 @@
         </button>
     </div>
 
-    <!-- NOUVELLE POP-UP DU CHRONOMÈTRE -->
+    <!-- POP-UP POUR LE CHRONOMÈTRE -->
     <div id="timer-popup" class="timer-popup">
         <span class="close-button" id="closeTimerPopup">&times;</span>
         <h3 class="text-lg text-red-500 glitch-text mb-4">
@@ -521,6 +545,23 @@
         </h3>
         <p id="timer-display" class="timer-popup-display">00:00:00</p>
         <p class="text-red-300 mt-2">Le temps est sauvegardé.</p>
+        <!-- NOUVEAU BOUTON POUR LA FENÊTRE DE LA PREMIÈRE ENTRÉE -->
+        <button id="showFirstEntryButton" class="absolute bottom-2 right-2 text-red-500 hover:text-red-300 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- NOUVELLE POP-UP POUR LA PREMIÈRE ENTRÉE -->
+    <div id="first-entry-popup" class="first-entry-popup">
+        <span class="close-button" id="closeFirstEntryPopup">&times;</span>
+        <h3 class="text-lg text-red-500 glitch-text mb-4">
+            [JOURNAL DE CONNEXION INITIALE]
+        </h3>
+        <p class="text-red-300 mb-2">Première connexion détectée le:</p>
+        <p id="first-entry-display" class="first-entry-display"></p>
+        <p class="text-red-300 mt-2">Nous nous souvenons de vous.</p>
     </div>
     
     <!-- Superposition de chargement de déverrouillage -->
@@ -581,7 +622,7 @@
             const errorSound = document.getElementById('errorSound');
             const successSound = document.getElementById('successSound');
 
-            // NOUVEAUX ÉLÉMENTS DU CHRONOMÈTRE
+            // ÉLÉMENTS DU CHRONOMÈTRE
             const shadowKillerTitle = document.getElementById('shadowKillerTitle');
             const timerPopup = document.getElementById('timer-popup');
             const closeTimerPopup = document.getElementById('closeTimerPopup');
@@ -591,6 +632,13 @@
             let totalTimeElapsed = 0;
             let timerInterval = null;
             let timerRunning = false;
+            
+            // NOUVEAUX ÉLÉMENTS POUR LE JOURNAL DE CONNEXION
+            const firstEntryPopup = document.getElementById('first-entry-popup');
+            const firstEntryDisplay = document.getElementById('first-entry-display');
+            const showFirstEntryButton = document.getElementById('showFirstEntryButton');
+            const closeFirstEntryPopup = document.getElementById('closeFirstEntryPopup');
+            const firstEntryKey = 'shk_first_entry';
             // FIN DES NOUVEAUX ÉLÉMENTS
 
             const CHAT_ACCESS_CODE = "95741";
@@ -660,7 +708,6 @@
                 "On dirait qu'on est piégés.",
                 "La vidéo ne marche pas !",
                 "Y a quelqu'un ?",
-                "La lumière clignote chez moi.",
                 "Je crois qu'on m'observe...",
                 "Cette page est bizarre...",
                 "Qui a mis ça en ligne ?",
@@ -1089,12 +1136,12 @@
                     errorSound.pause();
                     errorSound.currentTime = 0;
 
-                    // Joue le son de succès et l'arrête après 7 secondes (MODIFICATION)
+                    // Joue le son de succès et l'arrête après 7 secondes
                     successSound.play();
                     successSoundTimeout = setTimeout(() => {
                         successSound.pause();
                         successSound.currentTime = 0;
-                    }, 7000); // Durée de 7 secondes
+                    }, 7000);
                     
                     codePopup.style.display = 'none';
                     codeInput.value = '';
@@ -1173,7 +1220,7 @@
                 }
             });
 
-            // NOUVELLE LOGIQUE DU CHRONOMÈTRE
+            // LOGIQUE DU CHRONOMÈTRE
             
             // Fonction pour formater le temps en HH:MM:SS
             function formatTimer(milliseconds) {
@@ -1219,6 +1266,14 @@
                 localStorage.setItem(localStorageKey, totalTimeElapsed.toString());
             }
 
+            // GESTION DU JOURNAL DE CONNEXION INITIALE
+            // Sauvegarde l'heure d'entrée si elle n'existe pas déjà
+            function saveFirstEntryTime() {
+                if (!localStorage.getItem(firstEntryKey)) {
+                    localStorage.setItem(firstEntryKey, Date.now().toString());
+                }
+            }
+
             // Événement pour ouvrir la pop-up du chronomètre
             shadowKillerTitle.addEventListener('click', () => {
                 timerPopup.style.display = 'block';
@@ -1227,6 +1282,39 @@
             // Événement pour fermer la pop-up du chronomètre
             closeTimerPopup.addEventListener('click', () => {
                 timerPopup.style.display = 'none';
+            });
+
+            // Événement pour ouvrir la pop-up de la première entrée
+            showFirstEntryButton.addEventListener('click', () => {
+                // Ferme la pop-up du chronomètre
+                timerPopup.style.display = 'none';
+                
+                // Récupère l'horodatage de la première entrée
+                const firstEntryTimestamp = localStorage.getItem(firstEntryKey);
+                if (firstEntryTimestamp) {
+                    const firstEntryDate = new Date(parseInt(firstEntryTimestamp, 10));
+                    // Formate la date pour un affichage lisible en français
+                    const formattedDate = firstEntryDate.toLocaleString('fr-FR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        second: '2-digit' 
+                    });
+                    firstEntryDisplay.textContent = formattedDate;
+                } else {
+                    firstEntryDisplay.textContent = "Aucune entrée trouvée.";
+                }
+                
+                // Affiche la nouvelle pop-up
+                firstEntryPopup.style.display = 'block';
+            });
+            
+            // Événement pour fermer la pop-up de la première entrée
+            closeFirstEntryPopup.addEventListener('click', () => {
+                firstEntryPopup.style.display = 'none';
             });
 
             // Sauvegarder le temps lorsque l'utilisateur quitte la page
@@ -1245,8 +1333,10 @@
                 startScreen.style.display = 'none';
                 loadingScreen.style.display = 'flex';
                 
-                // Le chronomètre démarre ici, au même moment que l'écran de chargement (MODIFICATION)
+                // Le chronomètre démarre ici, au même moment que l'écran de chargement
                 startTimer();
+                // Sauvegarde l'heure de la première entrée
+                saveFirstEntryTime();
 
                 setTimeout(async () => {
                     loadingScreen.style.display = 'none';
