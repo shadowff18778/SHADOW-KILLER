@@ -72,7 +72,7 @@
             animation: flicker 0.2s infinite alternate;
         }
 
-        /* UPDATED: Blinking effect for the red dot to alternate between colors */
+        /* Blinking effect for the red dot to alternate between colors */
         @keyframes blink-color {
             0%, 100% { background-color: #ff0000; }
             50% { background-color: #000000; }
@@ -272,7 +272,7 @@
             z-index: 10;
         }
         
-        /* NEW: Unlock Loading Overlay */
+        /* Unlock Loading Overlay */
         #unlock-loading-overlay {
             position: fixed;
             top: 0;
@@ -306,7 +306,56 @@
             background-color: #ff0000;
             animation: load-progress 3s linear forwards;
         }
+        
+        /* Updated animation for the "Powered by SHADOW" text */
+        @keyframes shadow-text-flicker {
+            0%, 100% { 
+                opacity: 1;
+                /* Subtler text shadow for a less intense neon effect */
+                text-shadow: 0 0 2px #ff0000, 0 0 5px #ff0000; 
+            }
+            50% { 
+                opacity: 0.8;
+                text-shadow: none; /* No shadow at midpoint for the flicker effect */
+            }
+        }
+        
+        .shadow-text {
+            color: #ff0000;
+            font-size: 1rem;
+            animation: shadow-text-flicker 1.5s infinite alternate;
+        }
 
+        /* NEW: Stylized message for video not found */
+        .video-error-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ff0000;
+            font-size: 1.5rem;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        /* Animation for the error icon */
+        @keyframes pulse-error {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .video-error-overlay .error-icon {
+            animation: pulse-error 1.5s infinite;
+            font-size: 4rem;
+        }
+        
     </style>
 </head>
 <body class="bg-black text-white flex flex-col h-full">
@@ -325,6 +374,10 @@
     <div id="loading-screen" class="w-full h-full bg-black z-20">
         <p class="text-xl text-red-600 flicker">
             BOOTING...
+        </p>
+        <!-- NEW: "Powered by SHADOW" text with animation -->
+        <p class="shadow-text absolute bottom-4">
+            Powered by SHADOW
         </p>
     </div>
 
@@ -356,6 +409,13 @@
                         <button id="unlockVideoButton" class="bg-red-600 text-black font-bold p-2 mt-4 glitch-text">
                             DÉVERROUILLER LA VIDÉO
                         </button>
+                    </div>
+
+                    <!-- NEW: Video error overlay -->
+                    <div id="video-error-overlay" class="video-error-overlay">
+                        <span class="error-icon mb-4">☠</span>
+                        <p class="glitch-text text-2xl">[VIDÉO INACCESSIBLE]</p>
+                        <p class="text-sm mt-2 text-gray-400">Le flux vidéo n'est pas disponible pour le moment.</p>
                     </div>
 
                     <!-- Video player controls -->
@@ -428,7 +488,7 @@
         </button>
     </div>
     
-    <!-- NEW: Pop-up with a cool loading animation for unlocking content -->
+    <!-- Unlock Loading Overlay -->
     <div id="unlock-loading-overlay" class="glitch-text" style="display: none;">
         <h3 id="unlock-loading-text" class="text-3xl text-red-600 text-center glitch-text"></h3>
         <div class="loading-progress-bar">
@@ -458,7 +518,7 @@
             
             // NEW: Elements for the new loading animation
             const unlockLoadingOverlay = document.getElementById('unlock-loading-overlay');
-            const unlockLoadingText = document.getElementById('unlock-loading-text');
+            const unlockLoadingText = document = document.getElementById('unlock-loading-text');
 
             // Video player elements
             const videoWrapper = document.getElementById('video-wrapper');
@@ -474,8 +534,10 @@
             const videoLockOverlay = document.getElementById('video-lock-overlay');
             const unlockVideoButton = document.getElementById('unlockVideoButton');
 
+            // NEW: Video error overlay
+            const videoErrorOverlay = document.getElementById('video-error-overlay');
+
             const CHAT_ACCESS_CODE = "95741";
-            // NEW CODE: Video access code is now the same as the chat access code.
             const VIDEO_ACCESS_CODE = "95741"; 
             let userIp = null;
             let popupsQueue = [];
@@ -933,11 +995,39 @@
                             messageInput.placeholder = "> ENVOYER UN MESSAGE...";
                             messageInput.focus();
                         } else if (target === 'video') {
-                            videoLockOverlay.style.display = 'none';
-                            videoPlayer.src = "https://cinetacos.xyz/series/Arrow/S01/Arrow-S01-E04.mp4";
-                            playPauseBtn.disabled = false;
-                            videoPlayer.load(); // Load the video
-                            videoPlayer.play(); // Start playing automatically
+                            // Check the video URL
+                            const videoUrl = "https://non-existent-link.com/video.mp4"; // This link will fail
+                            // For a working link, use:
+                            // const videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+                            
+                            if (videoUrl && videoUrl.trim() !== '') {
+                                videoLockOverlay.style.display = 'none';
+                                videoPlayer.src = videoUrl;
+                                // Add a listener to handle video loading errors gracefully
+                                videoPlayer.addEventListener('error', () => {
+                                    videoLockOverlay.style.display = 'flex';
+                                    videoErrorOverlay.style.display = 'flex';
+                                    videoControls.style.display = 'none';
+                                    videoPlayer.style.display = 'none';
+                                    unlockVideoButton.style.display = 'none';
+                                });
+                                // On successful load, display the video and its controls
+                                videoPlayer.addEventListener('canplay', () => {
+                                    videoPlayer.style.display = 'block';
+                                    videoControls.style.display = 'flex';
+                                    unlockVideoButton.style.display = 'none';
+                                    videoLockOverlay.style.display = 'none';
+                                    videoPlayer.play();
+                                });
+                                videoPlayer.load();
+                            } else {
+                                // If no video URL is provided, show the error message
+                                videoLockOverlay.style.display = 'flex';
+                                videoErrorOverlay.style.display = 'flex';
+                                videoControls.style.display = 'none';
+                                videoPlayer.style.display = 'none';
+                                unlockVideoButton.style.display = 'none';
+                            }
                         }
                     }, 3000); // 3-second loading time
                     
