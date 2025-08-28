@@ -104,6 +104,30 @@
             display: none;
             animation: popup-shake 0.1s infinite alternate, flicker 0.3s infinite alternate;
         }
+        
+        /* Pop-up pour le chronomètre, sans animation de secousse */
+        .timer-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+            z-index: 300;
+            display: none;
+            text-align: center;
+        }
+        
+        .timer-popup-display {
+            font-family: 'VT323', monospace;
+            font-size: 3rem;
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
 
         .hacking-popup-bar {
             width: 100%;
@@ -385,7 +409,8 @@
     <div id="main-content" class="w-full flex-1 flex flex-col p-4 hidden">
         <!-- Barre d'alerte en haut -->
         <div class="alert-bar text-sm sm:text-base p-2 flex justify-between items-center text-red-300 flex-shrink-0">
-            <span class="glitch-text text-xl text-red-500">SHADOW KILLER</span>
+            <!-- Ajout d'un ID pour le titre afin de pouvoir y ajouter un événement -->
+            <span id="shadowKillerTitle" class="glitch-text text-xl text-red-500 cursor-pointer">SHADOW KILLER</span>
             <!-- Le compteur d'utilisateurs a été déplacé -->
             <span class="glitch-text text-xl text-red-500"></span>
         </div>
@@ -487,6 +512,16 @@
             SOUMETTRE
         </button>
     </div>
+
+    <!-- NOUVELLE POP-UP DU CHRONOMÈTRE -->
+    <div id="timer-popup" class="timer-popup">
+        <span class="close-button" id="closeTimerPopup">&times;</span>
+        <h3 class="text-lg text-red-500 glitch-text mb-4">
+            [TEMPS PASSÉ SUR LE SITE]
+        </h3>
+        <p id="timer-display" class="timer-popup-display">00:00:00</p>
+        <p class="text-red-300 mt-2">Le temps est sauvegardé.</p>
+    </div>
     
     <!-- Superposition de chargement de déverrouillage -->
     <div id="unlock-loading-overlay" class="glitch-text" style="display: none;">
@@ -545,6 +580,18 @@
             // Nouveaux éléments audio
             const errorSound = document.getElementById('errorSound');
             const successSound = document.getElementById('successSound');
+
+            // NOUVEAUX ÉLÉMENTS DU CHRONOMÈTRE
+            const shadowKillerTitle = document.getElementById('shadowKillerTitle');
+            const timerPopup = document.getElementById('timer-popup');
+            const closeTimerPopup = document.getElementById('closeTimerPopup');
+            const timerDisplay = document.getElementById('timer-display');
+            const localStorageKey = 'shk_time_spent';
+            let startTime = 0;
+            let totalTimeElapsed = 0;
+            let timerInterval = null;
+            let timerRunning = false;
+            // FIN DES NOUVEAUX ÉLÉMENTS
 
             const CHAT_ACCESS_CODE = "95741";
             const VIDEO_ACCESS_CODE = "95741"; 
@@ -1042,12 +1089,12 @@
                     errorSound.pause();
                     errorSound.currentTime = 0;
 
-                    // Joue le son de succès et l'arrête après 5 secondes
+                    // Joue le son de succès et l'arrête après 7 secondes (MODIFICATION)
                     successSound.play();
                     successSoundTimeout = setTimeout(() => {
                         successSound.pause();
                         successSound.currentTime = 0;
-                    }, 5000);
+                    }, 7000); // Durée de 7 secondes
                     
                     codePopup.style.display = 'none';
                     codeInput.value = '';
@@ -1126,11 +1173,81 @@
                 }
             });
 
+            // NOUVELLE LOGIQUE DU CHRONOMÈTRE
+            
+            // Fonction pour formater le temps en HH:MM:SS
+            function formatTimer(milliseconds) {
+                const totalSeconds = Math.floor(milliseconds / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            // Fonction pour mettre à jour l'affichage du chronomètre
+            function updateTimer() {
+                const now = Date.now();
+                const timePassedSinceStart = now - startTime;
+                const totalTime = totalTimeElapsed + timePassedSinceStart;
+                timerDisplay.textContent = formatTimer(totalTime);
+            }
+            
+            // Fonction pour démarrer le chronomètre
+            function startTimer() {
+                // S'assure de ne pas démarrer plusieurs intervalles
+                if (timerRunning) return;
+                timerRunning = true;
+                startTime = Date.now();
+                // Lit la valeur sauvegardée ou commence à 0
+                const savedTime = localStorage.getItem(localStorageKey);
+                totalTimeElapsed = savedTime ? parseInt(savedTime, 10) : 0;
+                // Met à jour l'affichage immédiatement
+                updateTimer();
+                // Démarre l'intervalle pour la mise à jour toutes les secondes
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+
+            // Fonction pour arrêter le chronomètre et sauvegarder le temps
+            function stopTimer() {
+                if (!timerRunning) return;
+                timerRunning = false;
+                clearInterval(timerInterval);
+                const now = Date.now();
+                const timePassedSinceStart = now - startTime;
+                totalTimeElapsed += timePassedSinceStart;
+                localStorage.setItem(localStorageKey, totalTimeElapsed.toString());
+            }
+
+            // Événement pour ouvrir la pop-up du chronomètre
+            shadowKillerTitle.addEventListener('click', () => {
+                timerPopup.style.display = 'block';
+            });
+
+            // Événement pour fermer la pop-up du chronomètre
+            closeTimerPopup.addEventListener('click', () => {
+                timerPopup.style.display = 'none';
+            });
+
+            // Sauvegarder le temps lorsque l'utilisateur quitte la page
+            window.addEventListener('beforeunload', () => {
+                // Met à jour le temps une dernière fois avant de sauvegarder
+                if (timerRunning) {
+                    const now = Date.now();
+                    const timePassedSinceStart = now - startTime;
+                    totalTimeElapsed += timePassedSinceStart;
+                    localStorage.setItem(localStorageKey, totalTimeElapsed.toString());
+                }
+            });
+
             // Initialiser le site
             startButton.addEventListener('click', () => {
                 startScreen.style.display = 'none';
                 loadingScreen.style.display = 'flex';
                 
+                // Le chronomètre démarre ici, au même moment que l'écran de chargement (MODIFICATION)
+                startTimer();
+
                 setTimeout(async () => {
                     loadingScreen.style.display = 'none';
                     mainContent.style.display = 'flex';
