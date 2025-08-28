@@ -327,6 +327,13 @@
         }
 
         /* NEW: Stylized message for video not found */
+        /*
+        * THIS IS THE IMPROVED PART.
+        * The overlay uses `position: absolute` and `inset: 0` to fill the parent container completely.
+        * The parent container (`#video-wrapper`) has `position: relative`.
+        * The flexbox classes (`flex`, `flex-col`, `items-center`, `justify-center`) ensure the content is perfectly centered.
+        * This combination makes the overlay fully responsive and contained within the video player's area.
+        */
         .video-error-overlay {
             position: absolute;
             inset: 0;
@@ -996,7 +1003,7 @@
                             messageInput.focus();
                         } else if (target === 'video') {
                             // Check the video URL
-                            const videoUrl = "https://non-existent-link.com/video.mp4"; // This link will fail
+                            const videoUrl = ""; // This link will fail
                             // For a working link, use:
                             // const videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
                             
@@ -1022,7 +1029,7 @@
                                 videoPlayer.load();
                             } else {
                                 // If no video URL is provided, show the error message
-                                videoLockOverlay.style.display = 'flex';
+                                videoLockOverlay.style.display = 'none'; // Ensure lock overlay is hidden
                                 videoErrorOverlay.style.display = 'flex';
                                 videoControls.style.display = 'none';
                                 videoPlayer.style.display = 'none';
