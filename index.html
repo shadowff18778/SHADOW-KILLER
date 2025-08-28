@@ -496,6 +496,11 @@
         </div>
     </div>
 
+    <!-- Nouveaux éléments audio pour les effets sonores -->
+    <!-- Le son d'erreur est en boucle, idéal pour un effet stressant -->
+    <audio id="errorSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto" loop></audio>
+    <audio id="successSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" preload="auto"></audio>
+
     <!-- Script pour la logique du site -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -518,7 +523,7 @@
             
             // Éléments pour la nouvelle animation de chargement
             const unlockLoadingOverlay = document.getElementById('unlock-loading-overlay');
-            const unlockLoadingText = document = document.getElementById('unlock-loading-text');
+            const unlockLoadingText = document.getElementById('unlock-loading-text');
 
             // Éléments du lecteur vidéo
             const videoWrapper = document.getElementById('video-wrapper');
@@ -537,6 +542,10 @@
             // Superposition d'erreur vidéo
             const videoErrorOverlay = document.getElementById('video-error-overlay');
 
+            // Nouveaux éléments audio
+            const errorSound = document.getElementById('errorSound');
+            const successSound = document.getElementById('successSound');
+
             const CHAT_ACCESS_CODE = "95741";
             const VIDEO_ACCESS_CODE = "95741"; 
             let userLocationData = null;
@@ -544,6 +553,7 @@
             let isProcessingPopup = false;
             let controlsHideTimeout = null;
             let userCountInterval = null;
+            let successSoundTimeout = null;
 
             // Liste de messages SYSTEM mise à jour pour être plus inquiétante.
             const chatMessagesList = [
@@ -975,6 +985,10 @@
 
             // Gérer le déverrouillage du chat
             unlockChatButton.addEventListener('click', () => {
+                // Arrête le son de l'échec si le joueur a cliqué avant
+                errorSound.pause();
+                errorSound.currentTime = 0;
+                
                 codePopup.style.display = 'block';
                 codeInput.focus();
                 submitCodeButton.dataset.target = 'chat';
@@ -982,6 +996,10 @@
             
             // Gérer le déverrouillage de la vidéo
             unlockVideoButton.addEventListener('click', () => {
+                // Arrête le son de l'échec si le joueur a cliqué avant
+                errorSound.pause();
+                errorSound.currentTime = 0;
+
                 codePopup.style.display = 'block';
                 codeInput.focus();
                 submitCodeButton.dataset.target = 'video';
@@ -992,6 +1010,16 @@
                 codePopup.style.display = 'none';
                 codeError.classList.add('hidden');
                 codeInput.value = '';
+                // Arrête le son de succès si il est en cours
+                if (successSoundTimeout) {
+                    clearTimeout(successSoundTimeout);
+                    successSoundTimeout = null;
+                }
+                successSound.pause();
+                successSound.currentTime = 0;
+                // S'assure que le son d'erreur est arrêté
+                errorSound.pause();
+                errorSound.currentTime = 0;
             });
 
             // Gérer la soumission du code
@@ -1010,6 +1038,17 @@
                 }
 
                 if (enteredCode === correctCode) {
+                    // Arrête le son de l'échec
+                    errorSound.pause();
+                    errorSound.currentTime = 0;
+
+                    // Joue le son de succès et l'arrête après 5 secondes
+                    successSound.play();
+                    successSoundTimeout = setTimeout(() => {
+                        successSound.pause();
+                        successSound.currentTime = 0;
+                    }, 5000);
+                    
                     codePopup.style.display = 'none';
                     codeInput.value = '';
                     
@@ -1057,6 +1096,8 @@
                     }, 3000);
                     
                 } else {
+                    // Joue le son d'erreur en boucle
+                    errorSound.play();
                     codeError.classList.remove('hidden');
                     codeInput.value = '';
                 }
